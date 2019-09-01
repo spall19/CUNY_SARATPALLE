@@ -1,0 +1,64 @@
+---
+title: "1stweekassignment_sarat"
+author: "Sarat"
+date: "8/30/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+```{r mushrooms_ds_dat}
+
+# read mushroom dataset
+mushroom_dataset <- read.table(url("https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data"), sep = ",", header = FALSE)
+
+
+colnames(mushroom_dataset) <- c("class", "cap-shape","cap-surface","cap-color","bruises","odor","gill-attachment","gill-spacing","gill-size","gill-color","stalk-shape","stalk-root","stalk-surface-above-ring","stalk-surface-below-ring","stalk-color-above-ring","stalk-color-below-ring","veil-type","veil-color","ring-number","ring-type","spore-print-color","population","habitat")
+
+mushroom_datafr <- data.frame(mushroom_dataset$class, mushroom_dataset$`cap-color`, mushroom_dataset$odor, mushroom_dataset$`stalk-surface-above-ring`, mushroom_dataset$`stalk-surface-below-ring`, mushroom_dataset$`spore-print-color`, mushroom_dataset$population, mushroom_dataset$habitat)
+
+colnames(mushroom_datafr) <- c("class", "capcolor", "odor", "stalksurfaceabovering", "stalksurfacebelowring", "sporeprintcolor", "population", "habitat")
+
+mushroom_datafr$class <- factor(mushroom_datafr$class, c("p","e"), ordered=FALSE)
+levels(mushroom_datafr$class) <- list("poisonous"="p","edible"="e")
+
+mushroom_datafr$capcolor <- factor(mushroom_datafr$capcolor, c("n","b","c","g","r","p","u","e","w","y"),ordered=FALSE)
+levels(mushroom_datafr$capcolor) <- list("brown"="n","buff"="b","cinnamon"="c","gray"="g","green"="r",
+                                  "pink"="p","purple"="u","red"="e","white"="w","yellow"="y")
+
+mushroom_datafr$odor <- factor(mushroom_datafr$odor, c("a","l","c","y","f","m","n","p","s"), ordered=FALSE)
+levels(mushroom_datafr$odor) <- list("almond"="a","anise"="l","creosote"="c","fishy"="y","foul"="f","musty"="m","none"="n","pungent"="p","spicy"="s")
+
+mushroom_datafr$stalksurfaceabovering <- factor(mushroom_datafr$stalksurfaceabovering, c("f","y","k","s"), ordered=FALSE)
+levels(mushroom_datafr$stalksurfaceabovering) <- list("fibrous"="f", "scaly"="y", "silky"="k","smooth"="s")
+
+mushroom_datafr$stalksurfacebelowring <- factor(mushroom_datafr$stalksurfacebelowring, c("f","y","k","s"), ordered=FALSE)
+levels(mushroom_datafr$stalksurfacebelowring) <- list("fibrous"="f", "scaly"="y", "silky"="k","smooth"="s")
+
+mushroom_datafr$sporeprintcolor <- factor(mushroom_datafr$sporeprintcolor, c("k","n","b","h","r","o","u","w","y"), ordered=FALSE)
+levels(mushroom_datafr$sporeprintcolor) <- list("black"="k","brown"="n","buff"="b","chocolate"="h","green"="r",
+                                  "orange"="o","purple"="u","white"="w","yellow"="y")
+ 
+mushroom_datafr$population <- factor(mushroom_datafr$population, c("a","c","n","s","v","y"), ordered=FALSE)
+levels(mushroom_datafr$population) <- list("abundant"="a","clustered"="c","numerous"="n",
+                                  "scattered"="s","several"="v","solitary"="y")
+
+mushroom_datafr$habitat <- factor(mushroom_datafr$habitat, c("g","l","m","p","u","w","d"), ordered=FALSE)
+levels(mushroom_datafr$habitat) <- list("grasses"="g","leaves"="l","meadows"="m","paths"="p",
+                                  "urban"="u","waste"="w","woods"="d")
+
+
+mushroom_datafr[1:10,]
+
+summary(mushroom_datafr[1:10,])
+
+#poisonous_mushrooms <- subset(mushroom_datafr,( odor=NOT(almond.OR.anise.OR.none) OR spore#printcolor=green OR odor=none.AND.stalksurfacebelowring=scaly )
+	          
+
+```
+
