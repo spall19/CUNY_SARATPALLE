@@ -1,0 +1,87 @@
+---
+title: "assignment_regex_strings"
+author: "Sarat Palle"
+date: "9/14/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r assignment3}
+#install.packages(stringr)
+library(stringr)
+name <- c("Moe Szyslak","Burns, C. Montgomery","Rev. Timothy Lovejoy","Ned Flanders","Simpson, Homer","Dr. Julius Hibbert")
+name
+
+#Rearragne the vector so that all elements conform to the standard firstname lastname
+name_rem_init <- str_replace_all(name," [:alpha:]{1}\\. "," ")  #Remove Initials
+name_rem_tit <- str_replace_all(name_rem_init,"[:upper:]{1}[:lower:]+\\."," ")  #Remove Titles
+name_final <- str_trim(str_replace_all(name_rem_tit,"[, ]+"," "))    #Format by removing , and delete white spaces
+name_final
+
+# Construct logical vector indicating whether character has title(Dr./ReVetc)
+# Assuming that Titles have first letter in upper case and ends wuth full stop
+title_logicalvect <- str_detect(name, "[:upper:]{1}[:lower:]+\\.")
+#title_logicalvect
+df_name_hastitle <- data.frame(name_final,title_logicalvect)
+df_name_hastitle
+#OR
+title_logicalvect <- str_detect(name, "^Rev.|Dr.")
+#title_logicalvect
+df_name_hastitle <- data.frame(name_final,title_logicalvect)
+df_name_hastitle
+
+#Construct a logical vector indicating whether a character has a second name
+#Assuming second name has pattern " [:alpha:]. "
+name_has2nd_name <- str_detect(name," [:alpha:]{1}\\. ")  
+#name_has2nd_name
+df_has_2ndname <- data.frame(name,name_has2nd_name)
+df_has_2ndname
+
+# Regular Expressions and Possible Strings
+expression_1 <- "[0-9]+\\$"
+str_detect("4365466$", expression_1)
+str_detect("76464367436538775$", expression_1)
+
+expression_2 <- "\\b[a-z]{1,4}\\b"
+str_detect("avdz", expression_2)
+str_detect("z", expression_2)
+str_detect("az", expression_2)
+
+expression_3 <- ".*?\\.txt$"
+str_detect("_.txt", expression_3)
+str_detect("asghsdhjh_tr.txt", expression_3)
+str_detect("asghsdhjh_12:.txt", expression_3)
+
+expression_4 <- "\\d{2}/\\d{2}/\\d{4}"
+str_detect("09/08/2019", expression_4)
+str_detect("00/00/0000", expression_4)
+
+expression_5 <- "<(.+?)>.+?</\\1>"
+str_detect("<b>Hello</b>", expression_5)
+str_detect("<html><title>Welcome</title></html>", expression_5)
+
+#The following code hides a secret message. Crack it withRand regular expressions.
+#Hint: Some of the characters are more revealing than others!
+message <- "clcopCow1zmstc0d87wnkig7OvdicpNuggvhryn92Gjuwczi8hqrfpRxs5Aj5dwpn0TanwoUwisdij7Lj8kpf03AT5Idr3coc0bt7yczjatOaootj55t3Nj3ne6c4Sfek.r1w1YwwojigOd6vrfUrbz2.2bkAnbhzgv4R9i05zEcrop.wAgnb.SqoU65fPa1otfb7wEm24k6t3sR9zqe5fy89n6Nd5t9kc4fE905gmc4Rgxo5nhDk!gr"
+message <- unlist(str_extract_all(message,"[[:upper:].]{1,}"))
+message <- str_replace_all(paste(message, collapse = ''), "[.]", " ");
+message
+
+
+# Assuming that Titles have first letter in upper case and ends wuth full stop
+#title <- unlist(str_extract_all(name,"[:upper:]{1}[:lower:]+\\."))
+#title
+#or
+#title <= grep("[A-Z]{1}[a-z]{1,}\\.",name, value = T)
+#title
+
+```
