@@ -1,0 +1,128 @@
+---
+title: "5thWeek_Untidy_Sets"
+author: "Sarat Palle"
+date: "9/27/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, Pflightdelay, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+### Install Packages and Include Libraries
+
+```{r}
+#install.packages("tidyr")
+#install.packages("dplyr")
+#install.packages("stringr")
+library(tidyr)
+library(dplyr)
+library(stringr)
+```
+
+#Step1:
+# Reading data as is from Pflightdelay and writing it to CSV file on Physical server.
+
+```{r}
+flightset <- 
+    data.frame( header = c("","","Los Angeles","Phoenix","San Diego","San Francisco","Seattle"),
+              al_ontime = c("ALASKA","on time","497","221","212","503","1841"),
+              al_delayed = c("","delayed","62","12","20","102","305"),
+              amwest_ontime = c("AM WEST","on time","694","4840","383","320","201"),
+              amwest_delayed = c("","delayed","117","415","65","129","61") )
+flight_delays <- data.frame(flightset$header,flightset$al_ontime,flightset$al_delayed,
+                            flightset$amwest_ontime,flightset$amwest_delayed)
+flight_delay <- t(flight_delays)
+flight_delay
+write.table(flight_delay, file = "~/Desktop/CUNY/5thWeek-TidyingData/flight_delay.csv", row.names = FALSE, col.names=FALSE,  sep = ",")
+```
+
+#Step2: Tidy and Transform Data by Preparing Molten Data
+#1. Read csv file form Physical server
+#2. Fill the rows which are missing and name the columns 
+#3. Gather data by merging destination cities into one variable destination and observations per destination 
+-Used gather function of TIDYR package to get the dataset based on Destination and switched columns
+#4. Spread column Status observations into 2 columns on time and delayed and observations were added accordingly
+-Used spread function of TIDYR package to split Status columns into separate columns vased values in it.
+
+```{r}
+#1
+path <- "~/Desktop/CUNY/5thWeek-TidyingData/flight_delay.csv"
+flightdelay <- data.frame(read.csv(path,stringsAsFactors = FALSE))
+#2
+names(flightdelay)[1] <- "Airline"
+names(flightdelay)[2] <- "Status"
+flightdelay$Airline[2] = flightdelay$Airline[1]
+flightdelay$Airline[4] = flightdelay$Airline[3]
+#3. Gather 
+flightdelay <- gather(flightdelay,"Destination","Total",3:7)
+flightdelay <- flightdelay[c(1,3,2,4)]
+flightdelay
+#4. Spread
+flightdelay <- spread(flightdelay,Status,Total)
+flightdelay
+
+```
+
+
+#Step3: Analysis to compare the arrival delays for the two airlines
+#1. Add acolumn Total adding delayed and on time and arrange flightdelat data frame by airline and Destination
+#2. Calculate the Arrival Delays of 2 airlines ALASKA and AM WEST without considering destinations. Step 1 helps performance while -summarizing(Arrange helps performance) 
+#3. Calculate the Arrival Delays of 2 airlines ALASKA and AM WEST by considering destinations
+#4.Best Airlines by destination wise while considering delays: From #3 we get airline and destination based delay and we get a dataset
+- for min delay based on airline which has airline and delay. Perform inner join 2 data sets to get the Airline.
+-Airline_Delayed_Dest - Airline and Destination Wise Delay
+-Destination_mindelay - Destination wise Delay
+-BestAirlinebyDelay - Join of Airline_Delayed_Dest & Destination_mindelay which derices best performed airlines by Destination wise and -delay time
+#5. Airport with most of the delays (Ratio)
+
+```{r}
+#1 Below
+flightdelay <- mutate(flightdelay,Total = delayed + `on time`)
+flightdelay <- arrange(flightdelay,desc(Airline))
+#flightdelay
+
+#2
+Airline_Summary <- flightdelay %>% 
+                  group_by(Airline) %>% 
+                summarize(Airline_Delayed_All = sum(delayed),Airline_Ontime_All = sum(`on time`),Airline_Total_All = sum(Total))
+Airline_Delayed_Summary <- select(Airline_Summary,Airline,Airline_Delayed_All)
+Airline_Delayed_Summary
+
+#3 
+flightdelay <- arrange(flightdelay,Airline,Destination)
+
+Airline_Dest_Summary <- flightdelay %>% 
+                        group_by(Airline,Destination) %>% 
+              summarize(Airline_Delayed_Dest = sum(delayed),Airline_Ontime_Dest = sum(`on time`),Airline_Total_Dest = sum(Total))
+Airline_Delayed_Dest <- arrange(select(Airline_Dest_Summary,Airline,Destination,Airline_Delayed_Dest),Destination,Airline_Delayed_Dest)
+Airline_Delayed_Dest
+
+#4
+Destination_mindelay <- Airline_Delayed_Dest %>% 
+                        group_by(Destination) %>% 
+                        summarise(Airline_Delayed_Dest = min(Airline_Delayed_Dest))  %>% 
+                        select(Destination,Airline_Delayed_Dest) 
+Destination_mindelay
+BestAirlinebyDelay <- inner_join(Airline_Delayed_Dest,Destination_mindelay,by = c("Destination","Airline_Delayed_Dest"))
+BestAirlinebyDelay
+
+#5
+#Destination wise Total Delayed and Total Ontime
+Destination_Arr_Rates <- flightdelay %>% na.omit() %>% 
+  group_by(Destination) %>% 
+  summarise(delayed = sum(delayed), `on time` = sum(`on time`),Total = sum(Total) ) %>% 
+  mutate(delayed_ratio = round((delayed * 100 / Total),2),ontime_ratio = round((`on time` * 100/Total),2)) %>%
+  arrange(desc(delayed_ratio))
+Destination_Arr_Rates
+Destination_Arr_Rates[1,1]
+
+```
+
+
