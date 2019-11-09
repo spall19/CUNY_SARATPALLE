@@ -1,0 +1,40 @@
+---
+title: "WEEK11_RECOMMENDERSYSTEMS"
+author: "Sarat Palle"
+date: "11/5/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<h1>#Tasks:</h1>
+<h2>1. -Analyze an existing recommender system that you find interesting? <br>
+  -Who are your target users?<br>
+  -what are their key goals?<br>
+  -How can you help them in acccomplish their goals?</h2>
+<h2>2. Perform a Scenario Design analysis. Consider whether it makes sense for your selected recommender system to perform scenario design twice, once for the organization (e.g. Amazon.com) and once for the organization’s customers.</h2>
+<h2>3. Attempt to reverse engineer what you can about the site, from the site interface and any available information that you can find on the Internet or elsewhere</h3><br>
+<h2>4. Include specific recommendations about how to improve the site's recommendation capabilities going forward. </h2>
+<h2>5. Create your report using an R Markdown file, and create a discussion thread with a link to the GitHub repo where your Markdown file notebook resides.  You are not expected to need to write code for this discussion assignment.</h2><br>
+
+<h3>
+<b>1.</b><br>
+-Recommendor System: Google Flight/Hotel Search <br>
+-Who are your target users? - Google users/customers who use google for travel<br>
+-What are their key goals? - Receive best travel options as per customer needs<br>
+-How can you help them in accomplish their goals? - By providing best travel options based on customer interest and recommend better options for customer to choose and plan for travel.
+</h3>
+
+<h3><b>2. Scenario Based Analysis: </b>
+For every flight/Hotel search internet user made on google page will save data like Departure City, Arrival City, travel dates, Class of travel, price range, hotel rating, dates of travel, user travel habits, user priorities in every aspect and recommendation algorithms run on top of all these priorities and recommendations will be sent to user's email or home page with best deals possible, price drops, possible flight/hotel options.<br><br>Google send recommendations based on collected user data which lead to optimal travel reservations via google. Traditional Collaborative filtering algorithms to find users with routine travel and send recommendations. Clustering algorithsm used by google groups users with similar travel plans and segments in the cluster deeply breakdown customer travel habits, customer income, personal information. Personal information somehow helps sending better recommendations. <br><br>Customers receive recommendations from google either on web pages while browisng or in emails. Cusotmers can choose better options according to their needs. Sometimes recommendations may be irrelevant because of larger columes of data, dissmilar clusters. 
+</h3>
+
+<h3><b>3.</b><br> Accessing users social media data and sending recommendations are also possible in some cases. Reference below.<br>
+https://www.sciencedirect.com/science/article/pii/S1877050915005153 <br>
+
+Hotel/Restaurant recommendations specific to a location upon tagging by the user or posting a picture.<br>
+</h3>
+
+<h3><b>4.</b><br> Google travel recommendations based on Traditional collaborative filtering, clustering, search based filtering allows best recommendations to certain extent. For the best recommendations deep learning and AI helps developing better algorithms to throw the best possible recommendations. Separating customer set into best possible clusters/segments possible based on their travel habits lead to better recommendations. A non-europe customer who already visited europe in a month don't need travel recommendations to europe for that month or particular time. </h3>
