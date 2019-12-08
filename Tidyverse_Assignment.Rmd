@@ -1,0 +1,85 @@
+---
+title: "Tidyverse Assignment"
+author: "Sarat Palle"
+date: "12/4/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#install.packages("tidyverse")
+#install.packages("tidyverse",repos = "http://cran.us.r-project.org")
+library("tidyverse")
+
+mydata <- read.csv("C:/Users/pallchus/Desktop/CUNY/TidyverseAssignment/amazon.csv")
+#Source: https://www.kaggle.com/gustavomodelli/forest-fires-in-brazil
+mydata
+```
+
+```{r}
+# time series plot to find the number of acres of land has been burnt per year
+time_series <- aggregate(mydata$number, by=list(year=mydata$year), FUN=sum)
+names(time_series)[2] <- "total"
+ggplot(time_series, aes(x = year, y = total)) + geom_line() + expand_limits(y=18000)
+
+# Barplot to find the number of acres of land has been burnt per year
+ggplot(time_series, aes(x = year, y = total)) +  geom_bar(stat="identity")
+```
+
+
+
+```{r}
+#time series plot stae wise
+df <- aggregate(mydata$number, by=list(year=mydata$year,state=mydata$state), FUN=sum)
+names(df)[3] <- "total"
+ggplot(df, aes(x=year, y=total, group=state)) +
+  geom_line(aes(color=state))+
+  geom_point(aes(color=state))
+```
+
+
+```{r}
+# Stacked barplot with multiple groups
+ggplot(df, aes(x=year, y=total, fill=state)) +
+  geom_bar(stat="identity")
+```
+
+```{r}
+# Use position=position_dodge()
+ggplot(df, aes(x=year, y=total, fill=state)) +
+  geom_bar(stat="identity", position=position_dodge())
+```
+
+```{r}
+#pie chart to conclude which month has more fires
+# aggregating on number and grouping on month
+df1 <- aggregate(mydata$number, by=list(month=mydata$month), FUN=sum)
+
+#renaming 2nd column x as total 
+names(df1)[2] <- "total"
+
+#adding a column which has the ratio of current month total acres of land burnt to total land burnt
+df1$percent <- df1$total/sum(df1$total)
+
+#now lets construct a bar plot
+pie <- ggplot(df1, aes(x="", y=total, fill=month)) + geom_bar(width = 1, stat = "identity") 
+pie
+```
+
+
+```{r}
+# now lets construct a pie chart
+pie <- pie + coord_polar("y", start=0) 
+pie
+```
+
+
+```{r}
+#Lets give percentage of each month 
+pie <- pie + geom_text(aes(label = paste0(round(percent*100), "%")), position = position_stack(vjust = 0.5))
+pie
+```
